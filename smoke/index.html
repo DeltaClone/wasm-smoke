@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Horizon smoke test</title>
+<body style="font-family:monospace;background:#111;color:#ddd">
+<canvas id="canvas" width="640" height="360" style="background:#222;display:block"></canvas>
+<pre id="out"></pre>
+<script>
+  const out = document.getElementById("out");
+  for (const k of ["log", "error", "warn"]) {
+    const old = console[k].bind(console);
+    console[k] = (...a) => { out.textContent += a.join(" ") + "\n"; old(...a); };
+  }
+  window.addEventListener("error", e => console.error("page error:", e.message));
+</script>
+<script type="module">
+  import init from "./pkg/smoke.js";
+  try { await init(); } catch (e) { console.error("init failed:", e); }
+</script>
